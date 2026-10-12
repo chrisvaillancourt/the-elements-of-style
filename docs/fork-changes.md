@@ -2,7 +2,7 @@
 
 This fork of [obra/the-elements-of-style](https://github.com/obra/the-elements-of-style) reworks the `writing-clearly-and-concisely` skill. This file records what changed, why, and how, so later edits don't have to rediscover it.
 
-Baseline: upstream `05fc4f0` (2026-08-12). Fork commits: `e59690b` (rework), `bbc7f20` (description order), plus this record.
+Baseline: upstream `05fc4f0` (2026-08-12). Fork commits: `e59690b` (rework), `bbc7f20` (description order), then this record and the follow-up fixes from an independent review (see [Review follow-up](#review-follow-up-2026-10-12)).
 
 ## Why fork instead of using upstream
 
@@ -18,14 +18,14 @@ Strunk's text stays unchanged. All changes are in the wrapper.
 ### `SKILL.md`: from a reading assignment to a working checklist
 
 - **Description (frontmatter).** Third person, with explicit "Use when" and "Not for" clauses, written as a YAML folded block scalar (`>-`) so colons are safe. Its scope is drafts a person will read: messages, PR and Jira text, docs, commit message bodies, error and UI text. It excludes code, routine chat replies and text that must stay verbatim. Model invocation stays on.
-- **Body (~1.5k o200k tokens, was ~490).**
-  - a 7-step procedure: target, protect, structure, sentences, mechanics, verify, output
-  - a protected-content rule: never change code, commands, paths, quotes, numbers, dates, names, links, required templates, or qualifiers that set a claim's strength
+- **Body (~1.9k o200k tokens, was ~490).**
+  - a 7-step procedure: target, protect, structure, sentences, mechanics, verify, output. Target also settles the edit depth (proofread fixes mechanics; copyedit may restructure) and makes clear that quotation marks around a draft don't make it verbatim. Output may return the original unchanged and should flag unresolved meaning questions.
+  - a protected-content rule: never change code, commands, paths, placeholders, attributed quotations, numbers, dates, names, links, required templates, or wording that sets a claim's strength or a requirement's level
   - modern-usage gotchas (below)
-  - all 18 rules on two lines, with Strunk's own qualifiers
-  - common cuts, before/after examples and one "don't do this" example
+  - all 18 rules, one per line, summarized with selected caveats
+  - common cuts (intensifiers are cut only when empty; "very likely" is not "likely"), before/after examples including a Slack request, and one "don't do this" example
   - pointers to the reference files, with when to read each
-  - delegation for long documents: pass the subagent absolute file paths, because subagents may not be able to load skills by name
+  - long documents: edit inline by default; delegate only when the harness and size justify it, as one bounded assignment with absolute file paths (subagents may not be able to load skills by name), no further delegation, and a parent check of the result
 - **Order matters.** Procedure and gotchas come first. Claude Code re-attaches only the first 5,000 tokens of an invoked skill after compaction.
 
 ### Gotchas: where the 1918 text misleads modern technical prose
@@ -36,14 +36,15 @@ Each one overrides advice the reference gives, and each was checked against the 
 |---|---|---|
 | Generic *he* (misused-words: "They") | Singular *they* | Modern style guides, e.g. Google's developer style guide |
 | *Data* is plural only | Follow house style | Singular is common in technical writing |
-| 1918 *shall/will* person rules | Never change *shall/must/should/may* in specs | They can be normative (RFC 2119) |
+| 1918 *shall/will* person rules | Preserve requirement levels, negation and modal wording unless the user asks to change the requirement | Requirement wording can be normative (uppercase forms per RFC 2119/8174; lowercase can still state a requirement) |
 | *fix, feature, factor, system, state, phase, case* are hackneyed or colloquial | Keep them when they name a technical thing | bug fix, feature flag, state machine, test case |
 | *respectively* "may usually be omitted" | Keep it when it maps two lists | Removing it loses the mapping |
 | No opening *However*; no split infinitives | Both are fine | Pullum, "50 Years of Stupid Grammar Advice" (2009) |
 | Rule 10's examples treat "there were…" and "became…" as passive | Edit for directness, but don't call it passive | Most of those examples aren't passive constructions |
 | Rule 11's rewrites change claim strength | Positive form must not change what is claimed | Strunk calls one of his own rewrites "simply a guess at the writer's intention" |
 | Rule 13 read as "make sentences short" | "Make every word tell" | Strunk's own qualifier |
-| Period spellings (to-day, any one, programme) | Don't copy them | Archaic |
+| Rule 17: one tense in summaries | Applies to the narrative frame; keep tense changes that separate past events, current state and future plans | Status and incident summaries need them |
+| Historical spellings (to-day) | Use the document's current variety of English | *programme* is current UK English, not archaic |
 
 ### Reference split into `references/`
 
@@ -65,7 +66,7 @@ omp shows a skill's description as its first sentence, if under 100 characters, 
 ### Packaging and docs
 
 - **Self-references.** Upstream's manifests and install docs pointed at `obra/elements-of-style`, which returns 404 (upstream issues #14 and #18). They now point at this fork, edited in `everyharness.yaml` and in every generated file.
-- **Manifest hashes.** `.everyharness/manifest.json` stores plain sha256 hashes of generated files. Those were recomputed by hand instead of running `everyharness generate`, because `everyharness@1.0.0` (the only published version) was four days old and the edit was a pure URL substitution. A later `generate` produces the same URLs from `everyharness.yaml`.
+- **Manifest hashes.** `.everyharness/manifest.json` stores plain sha256 hashes of generated files. Those were recomputed by hand instead of running `everyharness generate`, because `everyharness@1.0.0` (the only published version) was four days old and the edit was a pure URL substitution. A later `generate` produces the same URLs from `everyharness.yaml`. **Caveat learned in review:** matching hashes prove only that files match the manifest, not that they match what the generator would emit. The hand edit missed that the Droid install ID derives from the repository name (`elements-of-style@the-elements-of-style`), now fixed. Next time, regenerate with a pinned, reviewed everyharness version instead.
 - **README.** It claimed "the complete 1918 text, roughly 12,000 tokens". It now says the text is abridged and gives per-file sizes (12,000 was the word count).
 - **Research doc.** Its links to the old single file now point at upstream's copy at `05fc4f0`.
 
@@ -91,4 +92,18 @@ omp shows a skill's description as its first sentence, if under 100 characters, 
 ## Open items
 
 - **License for the wrapper** (upstream issue #7, PR #10). The Strunk text is public domain, but the repository has no license file, and "Public Domain" isn't an SPDX identifier. Undecided.
-- **Trigger evaluation.** An omp trigger test (old vs. new skill, gpt-6.1-sol at low and medium effort) and an independent GPT-6 Astra review are in progress. Results will be added here.
+- **Trigger evaluation.** An omp trigger test (old vs. new skill, gpt-6.1-sol at low and medium effort) is in progress. Results will be added here.
+- **Meaning-preservation smoke cases** (suggested in review, not yet run): a quoted Slack draft with an embedded quotation and "not yet"; a requirements paragraph with `MUST NOT`, a number, a unit and a link; a Jira update with mixed tense, probability qualifiers and a polite ask. Compare against the previous skill or no skill, judged blind by the user.
+- **Version metadata** still says `1.0.0`. It doesn't matter for skills-CLI installs; bump it before distributing through Claude plugins.
+
+## Review follow-up (2026-10-12)
+
+An independent review (GPT-6 Astra via omp, high reasoning) of `e59690b`/`bbc7f20` found no blockers and confirmed the split, YAML parsing, links, sizes and manifest hashes. It found contradictions in the new instructions, all fixed in the follow-up commit:
+
+- **Example contradicted a gotcha:** "The token must be rotated" → "Rotate the token" dropped the *must* the gotcha protects. The example now keeps it ("You must rotate…").
+- **"Never change quoted text" was ambiguous** when the draft itself is quoted. Protection now covers attributed quotations and marked verbatim spans, and Target says delimiters don't make the draft verbatim.
+- **Blanket cut of "very/really/certainly"** conflicted with protecting claim strength. Now only empty intensifiers are cut.
+- **Droid install ID** in the generated install doc was wrong (see Packaging).
+- **Nits:** *programme* isn't archaic; the sample `grep` had no filename and a fixed line window (now: read from the heading to the next same-level heading); "all 18 rules with Strunk's qualifiers" overstated the summary.
+- **Improvements adopted:** edit depth and an unchanged-output option, a short-message rule that keeps the audience and mechanics checks, a Rule 17 chronology gotcha, a general "1918 preferences are advice" principle, one rule per line, a Slack example, delegation made optional and bounded, and a skills-CLI install route in the README.
+- **Not adopted yet:** a revised description (keep the current one unless trigger evidence shows a need), license and provenance changes (an owner decision), and the meaning-preservation cases (open item).

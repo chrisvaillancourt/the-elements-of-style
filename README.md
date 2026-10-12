@@ -10,7 +10,7 @@ This is a fork of [obra/the-elements-of-style](https://github.com/obra/the-eleme
 
 ## What's Inside
 
-- **Skill**: `writing-clearly-and-concisely` — the editing procedure, all 18 rules with Strunk's qualifiers, common cuts, modern-usage gotchas and examples (~1.5k tokens)
+- **Skill**: `writing-clearly-and-concisely` — the editing procedure, all 18 rules summarized with selected caveats, common cuts, modern-usage gotchas and examples (~1.9k tokens)
 - **Reference** (`skills/writing-clearly-and-concisely/references/`): an abridged 1918 text, about 12,400 words (~15.6k tokens) across three files. Sections IV (form), VI (spelling) and VII (exercises) and the original introduction are omitted.
 
 | File | Covers | Size |
@@ -26,6 +26,15 @@ Token counts use the o200k tokenizer.
 Agents invoke `writing-clearly-and-concisely` when asked to tighten, copyedit or proofread a draft, and before finalizing prose a person will read. A routine edit needs only `SKILL.md`. The skill tells the agent to read a single rule or word entry from the reference when it needs Strunk's full explanation, and to hand long documents to a subagent.
 
 ## Installing
+
+With the [skills CLI](https://github.com/vercel-labs/skills), for any harness that reads `~/.agents/skills` (Codex, omp) plus a symlink for Claude Code:
+
+```
+pnpm dlx skills add chrisvaillancourt/the-elements-of-style -g -s writing-clearly-and-concisely -a claude-code codex
+pnpm dlx skills update writing-clearly-and-concisely -g   # later, to pick up changes
+```
+
+Plugin installs per harness:
 
 <!-- everyharness:install:start -->
 

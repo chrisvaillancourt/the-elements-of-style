@@ -12,7 +12,7 @@ On Factory Droid:
 
 ```
 droid plugin marketplace add https://github.com/chrisvaillancourt/the-elements-of-style
-droid plugin install elements-of-style@elements-of-style
+droid plugin install elements-of-style@the-elements-of-style
 ```
 
 Note: Droid names the marketplace after the repository source (its basename), not the descriptor's declared name — so the install id differs from Copilot's.
