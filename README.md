@@ -6,7 +6,7 @@ William Strunk Jr.'s *The Elements of Style* (1918), packaged as a plugin for co
 
 This plugin gives your agent an editing procedure built on Strunk's rules for drafts a person will read: messages, PR and ticket text, docs, commit message bodies, error and UI text.
 
-This is a fork of [obra/the-elements-of-style](https://github.com/obra/the-elements-of-style). It keeps Strunk's text unchanged but rewrites the skill around it: a narrower trigger, a working procedure in `SKILL.md`, overrides where 1918 usage misleads modern technical prose, and the reference split so agents load only the part they need.
+This is a fork of [obra/the-elements-of-style](https://github.com/obra/the-elements-of-style). It keeps Strunk's text unchanged but rewrites the skill around it: a narrower trigger, a working procedure in `SKILL.md`, overrides where 1918 usage misleads modern technical prose, and the reference split so agents load only the part they need. [docs/fork-changes.md](docs/fork-changes.md) records what changed and why.
 
 ## What's Inside
 
