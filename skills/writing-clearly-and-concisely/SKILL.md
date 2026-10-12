@@ -1,13 +1,12 @@
 ---
 name: writing-clearly-and-concisely
 description: >-
-  Edits prose for clarity and concision with Strunk's Elements of Style (1918):
-  cuts needless words, prefers active voice and concrete terms, and fixes
-  punctuation and word misuse. Use when asked to tighten, copyedit, proofread,
-  or "Strunk" a draft, and before finalizing prose a person will read: Slack or
-  email messages, PR and Jira text, READMEs and docs, commit message bodies,
-  error and UI text. Not for code, routine chat replies, or text that must stay
-  verbatim.
+  Copyedits drafts a person will read (Slack or email messages, PR and Jira
+  text, docs, commit message bodies, error and UI text) using Strunk's
+  Elements of Style (1918). Use when asked to tighten, copyedit, proofread, or
+  "Strunk" a draft, and before finalizing such prose. Cuts needless words,
+  prefers active voice and concrete terms, and fixes punctuation and word
+  misuse. Not for code, routine chat replies, or text that must stay verbatim.
 ---
 
 # Writing Clearly and Concisely
