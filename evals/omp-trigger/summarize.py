@@ -1,11 +1,11 @@
-"""Summarize results.jsonl from run_trigger.py. Usage: summarize.py <trigger-dir>"""
+"""Summarize run_trigger.py results. Usage: summarize.py <results.jsonl>"""
 
 import json
 import sys
 from collections import defaultdict
 from pathlib import Path
 
-rows = [json.loads(l) for l in (Path(sys.argv[1]) / "results.jsonl").read_text().splitlines()]
+rows = [json.loads(l) for l in Path(sys.argv[1]).read_text().splitlines()]
 rows = [r for r in rows if r["exit"] == 0]
 by_cond = defaultdict(list)
 for r in rows:
@@ -41,6 +41,6 @@ for c in cases:
             cells.append(f"{sum(r['activated'] for r in rs)}/{len(rs)}")
     print(f"  {c:20} " + "  ".join(f"{x:>4}" for x in cells))
 
-failed = [json.loads(l) for l in (Path(sys.argv[1]) / "results.jsonl").read_text().splitlines()]
+failed = [json.loads(l) for l in Path(sys.argv[1]).read_text().splitlines()]
 failed = [r["run_id"] for r in failed if r["exit"] != 0]
 print(f"\nNon-zero exits: {len(failed)} {failed[:10]}")
