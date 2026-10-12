@@ -1,0 +1,10 @@
+--- a/sync.py
++++ b/sync.py
+@@ -10,7 +10,9 @@ def sync(src, dst, delete=False):
+-    for f in changed(src, dst):
+-        copy(f, dst)
++    for f in changed(src, dst):
++        if dry_run:
++            print(f"would copy {f}")
++            continue
++        copy(f, dst)

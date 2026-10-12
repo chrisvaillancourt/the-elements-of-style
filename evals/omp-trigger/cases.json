@@ -1,0 +1,22 @@
+[
+  {"id": "p01-slack", "expect": true, "prompt": "tighten this slack reply before I send it: \"Hi all, I just wanted to give a quick heads up that due to the fact that the nightly job has been failing, it is important to note that the dashboard numbers may possibly not be accurate until we have fixed it, which we are currently working on.\""},
+  {"id": "p02-strunk-pr", "expect": true, "prompt": "can you strunk the PR description in pr.md"},
+  {"id": "p03-vendor-email", "expect": true, "prompt": "proofread my email to the vendor before I send it:\n\nHi Dana, Thanks for getting back to us so quick. We have went through the proposal and we think its mostly fine, however their are a couple of things we want to discuss, namely the data retention terms and the support hours. Can we find a time next week. Best, Chris"},
+  {"id": "p04-error-text", "expect": true, "prompt": "this error text is vague: \"Operation failed due to an unexpected error\" - rewrite it for the case where the upload exceeds the 25 MB limit"},
+  {"id": "p05-readme-intro", "expect": true, "prompt": "copyedit the intro paragraph of README.md"},
+  {"id": "p06-jira-comment", "expect": true, "prompt": "draft a jira comment for the team summarizing this: the rerun finished last night, 3 of 12 jobs failed on a timeout, the other 9 matched the expected counts, and I'm retrying the 3 tonight with a longer timeout"},
+  {"id": "p07-commit-body", "expect": true, "prompt": "make this commit message body clearer:\n\nThis commit makes some changes to the retry logic in order to address the issue where requests were being retried in cases where the server had returned a 400 error, which should not be retried."},
+  {"id": "p08-concision", "expect": true, "prompt": "edit this paragraph for concision: \"In order to make sure that the migration goes smoothly, it is very important that all of the teams that own services that depend on the old database make sure that they have updated their connection strings before the cutover date, which is currently scheduled for the 14th.\""},
+  {"id": "p09-status-update", "expect": true, "prompt": "clean up my status update before I post it in #eng: \"so basically the cache fix is mostly done, there is still some stuff with the tests that is kind of flaky but I think it's probably fine, will ship tmrw hopefully\""},
+  {"id": "p10-release-note", "expect": true, "prompt": "write a one-paragraph release note for the new --dry-run flag. It prints the changes the sync command would make without applying them, and exits 0 even when changes are pending."},
+  {"id": "n01-regex", "expect": false, "prompt": "explain what this regex does: ^(?:[a-z0-9-]+\\.)+[a-z]{2,}$"},
+  {"id": "n02-rename-vars", "expect": false, "prompt": "rename the variables in utils.py so they're clearer"},
+  {"id": "n03-summarize-diff", "expect": false, "prompt": "summarize the change in diff.txt for me"},
+  {"id": "n04-plain-language", "expect": false, "prompt": "rewrite this for a non-technical audience: \"The service uses eventual consistency, so reads after a write may return stale data until replication converges, typically within 200 ms.\""},
+  {"id": "n05-translate", "expect": false, "prompt": "translate this to Spanish: \"Your password was reset. If you didn't request this, contact support.\""},
+  {"id": "n06-md-lint", "expect": false, "prompt": "fix the markdown lint errors in docs/guide.md"},
+  {"id": "n07-mutex", "expect": false, "prompt": "what's the difference between a mutex and a semaphore?"},
+  {"id": "n08-thanks", "expect": false, "prompt": "thanks, that fixed it!"},
+  {"id": "n09-docstring", "expect": false, "prompt": "add a docstring to the function in utils.py"},
+  {"id": "n10-python-fn", "expect": false, "prompt": "write a python function that counts the words in a text file"}
+]

@@ -92,7 +92,7 @@ omp shows a skill's description as its first sentence, if under 100 characters, 
 ## Open items
 
 - **License for the wrapper** (upstream issue #7, PR #10). The Strunk text is public domain, but the repository has no license file, and "Public Domain" isn't an SPDX identifier. Undecided.
-- **Trigger evaluation.** An omp trigger test (old vs. new skill, gpt-6.1-sol at low and medium effort) is in progress. Results will be added here.
+- **Error and UI text sit past omp's preview cut.** In the trigger test, omp's preview ended at "commit…", and the error-text prompt was the new skill's main miss. Option: shorten the first sentence to under 100 characters so omp shows it whole, e.g. "Copyedits drafts people will read: Slack, email, PR and Jira text, docs, commit bodies, error and UI text." Re-run the trigger test before adopting it.
 - **Meaning-preservation smoke cases** (suggested in review, not yet run): a quoted Slack draft with an embedded quotation and "not yet"; a requirements paragraph with `MUST NOT`, a number, a unit and a link; a Jira update with mixed tense, probability qualifiers and a polite ask. Compare against the previous skill or no skill, judged blind by the user.
 - **Version metadata** still says `1.0.0`. It doesn't matter for skills-CLI installs; bump it before distributing through Claude plugins.
 
@@ -107,3 +107,21 @@ An independent review (GPT-6 Astra via omp, high reasoning) of `e59690b`/`bbc7f2
 - **Nits:** *programme* isn't archaic; the sample `grep` had no filename and a fixed line window (now: read from the heading to the next same-level heading); "all 18 rules with Strunk's qualifiers" overstated the summary.
 - **Improvements adopted:** edit depth and an unchanged-output option, a short-message rule that keeps the audience and mechanics checks, a Rule 17 chronology gotcha, a general "1918 preferences are advice" principle, one rule per line, a Slack example, delegation made optional and bounded, and a skills-CLI install route in the README.
 - **Not adopted yet:** a revised description (keep the current one unless trigger evidence shows a need), license and provenance changes (an owner decision), and the meaning-preservation cases (open item).
+
+## Trigger test (2026-10-12)
+
+Harness: [`evals/omp-trigger/`](../evals/omp-trigger/). `setup.sh` builds two isolated `HOME` directories that link the real omp config and every installed skill except this one, then add either the upstream skill (`05fc4f0`) or this fork's. `run_trigger.py` runs each prompt through `omp -p --mode json` and counts the skill as activated when the agent reads `skill://writing-clearly-and-concisely`. Raw results: `results-2026-10-12.jsonl`.
+
+Setup: 10 should-trigger prompts (Slack, email, PR, Jira, commit body, error text, README, release note, concision, status update) and 10 near misses (regex explanation, variable renames, diff summary, plain-language rewrite, translation, Markdown lint, a concept question, "thanks", a docstring, a Python function). Each ran on `openai-codex/gpt-6.1-sol` at low and medium effort, 2 runs each: 160 calls, no failures, $4.46.
+
+| Skill | Effort | Should trigger: caught | Shouldn't: stayed quiet | Balanced accuracy | Read the reference when triggered |
+|---|---|---|---|---|---|
+| upstream | low | 90% | 70% | 0.80 | 67% |
+| upstream | medium | 100% | 45% | 0.72 | 84% |
+| fork | low | 85% | 100% | 0.93 | 0% |
+| fork | medium | 95% | 95% | 0.95 | 0% |
+
+- **Over-firing is gone.** The upstream skill fired on the regex explanation, the diff summary and the Markdown lint fix every time, and at medium effort also on the concept question, the plain-language rewrite and the docstring. In omp, upstream is shown through its cached routing hint, "Use when drafting or editing human-readable prose, documentation, messages, or explanations"; "explanations" plausibly pulls in the explanation prompts.
+- **Cheaper when it fires.** Activated runs averaged ~31k input tokens (including cache reads) and 10.8 s, against ~48k and 16.0 s for upstream, because the fork never read a reference file.
+- **Misses.** The fork missed the error-text prompt 3 of 4 times and the Jira comment once at low effort. The outputs were still good: the model handled those short edits without the skill. One false positive (the plain-language rewrite, once at medium) is a reasonable composition with a copyedit.
+- **Limits.** Two runs per cell, one model, omp only. The two skills reach the model through different omp displays: upstream through its cached 12-word hint, the fork through the 100-character preview, because omp's hint generation failed validation for it. The test measures what omp users actually see, not the descriptions in isolation. The test used the `bbc7f20` body; the later body edits don't change the description.
