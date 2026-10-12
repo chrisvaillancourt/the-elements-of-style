@@ -4,22 +4,26 @@ William Strunk Jr.'s *The Elements of Style* (1918), packaged as a plugin for co
 
 ## Purpose
 
-This plugin hands your agent Strunk's guidance whenever it writes documentation, commit messages, error text, or any other prose a human will read.
+This plugin gives your agent an editing procedure built on Strunk's rules for drafts a person will read: messages, PR and ticket text, docs, commit message bodies, error and UI text.
+
+This is a fork of [obra/the-elements-of-style](https://github.com/obra/the-elements-of-style). It keeps Strunk's text unchanged but rewrites the skill around it: a narrower trigger, a working procedure in `SKILL.md`, overrides where 1918 usage misleads modern technical prose, and the reference split so agents load only the part they need.
 
 ## What's Inside
 
-- **Skill**: `writing-clearly-and-concisely` — when and how to apply Strunk's rules
-- **Reference**: the complete 1918 text, roughly 12,000 tokens
+- **Skill**: `writing-clearly-and-concisely` — the editing procedure, all 18 rules with Strunk's qualifiers, common cuts, modern-usage gotchas and examples (~1.5k tokens)
+- **Reference** (`skills/writing-clearly-and-concisely/references/`): an abridged 1918 text, about 12,400 words (~15.6k tokens) across three files. Sections IV (form), VI (spelling) and VII (exercises) and the original introduction are omitted.
 
-The reference covers:
+| File | Covers | Size |
+|---|---|---|
+| `usage-rules.md` | Elementary Rules of Usage: Rules 1–7, grammar and punctuation | ~2.8k tokens |
+| `composition-rules.md` | Elementary Principles of Composition: Rules 8–18 | ~7.4k tokens |
+| `misused-words.md` | Words and Expressions Commonly Misused: 65 entries, one heading each | ~5.4k tokens |
 
-1. **Elementary Rules of Usage** — seven rules of grammar and punctuation
-2. **Elementary Principles of Composition** — eleven rules for clear, forceful writing
-3. **Words and Expressions Commonly Misused** — an alphabetical guide to usage pitfalls
+Token counts use the o200k tokenizer.
 
 ## Usage
 
-Your agent invokes `writing-clearly-and-concisely` when it writes prose. The skill lists every rule at a glance, warns that the reference costs about 12,000 tokens, and suggests handing a draft to a subagent when context runs short. It opens the full reference only while writing or editing.
+Agents invoke `writing-clearly-and-concisely` when asked to tighten, copyedit or proofread a draft, and before finalizing prose a person will read. A routine edit needs only `SKILL.md`. The skill tells the agent to read a single rule or word entry from the reference when it needs Strunk's full explanation, and to hand long documents to a subagent.
 
 ## Installing
 
