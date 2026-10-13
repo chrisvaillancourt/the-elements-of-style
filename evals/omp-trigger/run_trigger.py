@@ -1,6 +1,6 @@
 """Trigger test for writing-clearly-and-concisely in omp.
 
-Usage: run_trigger.py <trigger-dir> <reps> <workers>
+Usage: run_trigger.py <trigger-dir> <reps> <workers> [variants, default old,new]
 Runs every case x variant (old/new) x effort (low/medium) x rep through
 `omp -p --mode json` with HOME pointed at an isolated home holding that
 variant, and records whether the agent read the skill. Results append to
@@ -17,6 +17,7 @@ from pathlib import Path
 
 root = Path(sys.argv[1])
 reps, workers = int(sys.argv[2]), int(sys.argv[3])
+variants = (sys.argv[4] if len(sys.argv) > 4 else "old,new").split(",")
 cases = json.loads((root / "cases.json").read_text())
 model = "openai-codex/gpt-6.1-sol"
 skill = "writing-clearly-and-concisely"
@@ -32,7 +33,7 @@ jobs = [
     (variant, effort, case, rep)
     for rep in range(1, reps + 1)
     for effort in ("low", "medium")
-    for variant in ("old", "new")
+    for variant in variants
     for case in cases
 ]
 

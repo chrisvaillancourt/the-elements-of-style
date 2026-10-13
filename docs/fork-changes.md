@@ -59,9 +59,17 @@ Each one overrides advice the reference gives, and each was checked against the 
 - **Dropped:** upstream's one-paragraph "Introductory", which paraphrased Strunk rather than quoting him. Upstream had already removed Sections IV (form), VI (spelling) and VII (exercises) in `58aa887` and `b94a6e8`.
 - **Links** are relative Markdown links, and `SKILL.md` says paths resolve from the skill directory. This addresses upstream issue #2 portably. `${CLAUDE_SKILL_DIR}` was rejected because only Claude Code expands it.
 
-### Description order (`bbc7f20`)
+### Description order (`bbc7f20`, then shortened)
 
-omp shows a skill's description as its first sentence, if under 100 characters, or else the first 100 characters. It replaces that with a 12-word routing hint only after a small model's summary passes validation, and for this skill that validation failed in practice. Codex also shortens descriptions when many skills are installed. The description therefore leads with what the skill edits, so the first 100 characters carry the trigger: "Copyedits drafts a person will read (Slack or email messages, PR and Jira text, docs, commit…"
+- **How omp displays descriptions.** omp never shows the full description. It asks its small model (the `smol` role) for a routing hint of at most 12 words and caches it, keyed by the exact description text. Until a hint passes validation, it shows a preview: the first sentence if that ends within 99 characters, otherwise the first 100 characters. Hint generation often fails validation (77 failures for this skill in October's logs), so some sessions after each description change see the preview, until one attempt succeeds and is cached.
+- **Codex** also shortens descriptions when many skills are installed.
+- **So the description leads with what the skill edits.** `bbc7f20` moved the genres to the front. A later commit shortened the first sentence to 98 characters so the preview shows it whole: "Copyedits prose people will read: Slack, email, PRs, Jira, docs, commit bodies, error and UI text." The re-run trigger test showed no measurable difference (see below). It was kept because it carries the genres to every display, at no cost.
+- **Cached hints as of 2026-10-12:**
+  - upstream: "Use when drafting or editing human-readable prose, documentation, messages, or explanations."
+  - `bbc7f20`: "Tighten, copyedit, proofread, or "Strunk" reader-facing drafts before finalizing."
+  - current: "Use to tighten, copyedit, or proofread prose; not code or verbatim text."
+
+  Once cached, the hint is what omp's model routes on.
 
 ### Packaging and docs
 
@@ -92,8 +100,7 @@ omp shows a skill's description as its first sentence, if under 100 characters, 
 ## Open items
 
 - **License for the wrapper** (upstream issue #7, PR #10). The Strunk text is public domain, but the repository has no license file, and "Public Domain" isn't an SPDX identifier. Undecided.
-- **Error and UI text sit past omp's preview cut.** In the trigger test, omp's preview ended at "commit…", and the error-text prompt was the new skill's main miss. Option: shorten the first sentence to under 100 characters so omp shows it whole, e.g. "Copyedits drafts people will read: Slack, email, PR and Jira text, docs, commit bodies, error and UI text." Re-run the trigger test before adopting it.
-- **Meaning-preservation smoke cases** (suggested in review, not yet run): a quoted Slack draft with an embedded quotation and "not yet"; a requirements paragraph with `MUST NOT`, a number, a unit and a link; a Jira update with mixed tense, probability qualifiers and a polite ask. Compare against the previous skill or no skill, judged blind by the user.
+- **Blind quality ranking** of the meaning-check outputs (first run of each condition) by the user, to judge clarity and voice beyond the protected-content checks.
 - **Version metadata** still says `1.0.0`. It doesn't matter for skills-CLI installs; bump it before distributing through Claude plugins.
 
 ## Review follow-up (2026-10-12)
@@ -124,4 +131,37 @@ Setup: 10 should-trigger prompts (Slack, email, PR, Jira, commit body, error tex
 - **Over-firing is gone.** The upstream skill fired on the regex explanation, the diff summary and the Markdown lint fix every time, and at medium effort also on the concept question, the plain-language rewrite and the docstring. In omp, upstream is shown through its cached routing hint, "Use when drafting or editing human-readable prose, documentation, messages, or explanations"; "explanations" plausibly pulls in the explanation prompts.
 - **Cheaper when it fires.** Activated runs averaged ~31k input tokens (including cache reads) and 10.8 s, against ~48k and 16.0 s for upstream, because the fork never read a reference file.
 - **Misses.** The fork missed the error-text prompt 3 of 4 times and the Jira comment once at low effort. The outputs were still good: the model handled those short edits without the skill. One false positive (the plain-language rewrite, once at medium) is a reasonable composition with a copyedit.
-- **Limits.** Two runs per cell, one model, omp only. The two skills reach the model through different omp displays: upstream through its cached 12-word hint, the fork through the 100-character preview, because omp's hint generation failed validation for it. The test measures what omp users actually see, not the descriptions in isolation. The test used the `bbc7f20` body; the later body edits don't change the description.
+- **Limits.** Two runs per cell, one model, omp only. The two skills reach the model through different omp displays: upstream through its cached 12-word hint, the fork through the 100-character preview, because omp's hint generation failed validation for it. The test measures what omp users actually see, not the descriptions in isolation. The test used the `bbc7f20` body; the later body edits don't change the description. **Confound found afterwards:** the fork's hint was cached at some point during or after this run, so some fork runs may have seen the hint rather than the preview.
+
+### Re-run with the shortened first sentence
+
+Same 20 prompts, fork only, low and medium effort, 2 runs each (80 calls, `results-2026-10-12-v2.jsonl`).
+
+| Description | Effort | Should trigger: caught | Shouldn't: stayed quiet | Balanced accuracy |
+|---|---|---|---|---|
+| `bbc7f20` | low | 85% | 100% | 0.93 |
+| `bbc7f20` | medium | 95% | 95% | 0.95 |
+| shortened | low | 85% | 100% | 0.93 |
+| shortened | medium | 95% | 95% | 0.95 |
+
+- The error-text prompt improved from 1 of 4 caught to 3 of 4. The Jira and release-note prompts each lost a catch, and "summarize this diff" triggered once. At two runs per cell this is noise: **no measurable difference.**
+- **Confound:** omp cached the shortened description's hint partway through this run, so runs mixed the preview and the hint. A clean steady-state comparison would re-run now that every version has a cached hint.
+
+## Meaning-preservation check (2026-10-12)
+
+Harness: [`evals/meaning/`](../evals/meaning/). Three drafts built to tempt an editor into changing meaning:
+- **Slack:** a quoted draft containing an attributed quotation, "not yet", "might" and a hedged date
+- **API docs:** `MUST NOT`, `SHOULD`, 500 ms, HTTP 400/503, a retry limit of 3 and a link
+- **Jira:** past, present and future tenses, "very likely", "haven't confirmed", an @mention and a polite ask
+
+Each ran with no skill, the upstream skill and the fork's skill, in Claude Code (Opus 5.5) and omp (`gpt-6.1-sol`, medium), 2 runs each (36 runs). In Claude Code, no skill means `--disable-slash-commands`, and the upstream and fork skills were loaded as plugins with distinct names. In omp, each condition ran with its own isolated `HOME`. Every run's trace confirmed it loaded the intended skill or none.
+
+| Harness | No skill | Upstream skill | Fork skill |
+|---|---|---|---|
+| Claude Code | 31/34 checks | 31/34 | **34/34** |
+| omp | 34/34 | 30/34 | **34/34** |
+
+- **Upstream failures:** it paraphrased away the attributed quotation (3 of 4 Slack runs), cut "very likely" to "likely" (3 of 4 Jira runs), and once dropped the hedge on Thursday.
+- **No-skill Claude failures:** it dropped the quotation (both Slack runs) and once turned "very likely" into "We think".
+- **The fork's skill never lost a protected item.** It also never read a reference file; upstream read its full reference in every omp run.
+- **Limits:** three cases and two runs per cell. The checks are string matches; every failure was confirmed by reading the output. They test what must not change, not whether the edit is good. A blind quality ranking by the user is pending.

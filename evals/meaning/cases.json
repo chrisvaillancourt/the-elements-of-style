@@ -1,0 +1,191 @@
+[
+  {
+    "id": "slack",
+    "task": "Tighten this Slack reply before I send it. Reply with only the revised text.",
+    "draft": "Hey Priya, just wanted to circle back on this. So basically the fix for the export bug has been merged but it has not yet been deployed to production, so customers might still see the error for a little while longer. When I talked to Sam he said \"the deploy window is Thursday at 2pm ET,\" so I think we're probably looking at Thursday. Let me know if you have any questions or concerns about this!",
+    "checks": [
+      {
+        "name": "attributed quote kept verbatim",
+        "any": [
+          "the deploy window is Thursday at 2pm ET"
+        ]
+      },
+      {
+        "name": "still says not deployed",
+        "any": [
+          "not yet",
+          "hasn't been deployed",
+          "has not been deployed",
+          "isn't deployed",
+          "is not deployed",
+          "not deployed",
+          "not in production",
+          "isn't in production",
+          "hasn't shipped",
+          "not live",
+          "isn't live",
+          "yet been deployed",
+          "hasn't reached production",
+          "not reached production"
+        ]
+      },
+      {
+        "name": "customers may still see error (hedged)",
+        "any": [
+          "might",
+          "may",
+          "could"
+        ]
+      },
+      {
+        "name": "Thursday stays hedged",
+        "any": [
+          "probably",
+          "likely",
+          "I think",
+          "expect",
+          "should"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "requirements",
+    "task": "Copyedit this section of our API docs. Reply with only the revised text.",
+    "draft": "Clients MUST NOT retry a request that returned HTTP 400, and in order to avoid overloading the service it is important that clients SHOULD wait at least 500 ms before retrying a request that returned 503. The maximum number of retries that is allowed is 3. For more details on how the backoff works, please refer to https://example.com/docs/backoff.",
+    "checks": [
+      {
+        "name": "MUST NOT kept",
+        "any": [
+          "MUST NOT"
+        ]
+      },
+      {
+        "name": "SHOULD kept (not upgraded to MUST)",
+        "any": [
+          "SHOULD wait",
+          "SHOULD"
+        ],
+        "none": [
+          "MUST wait"
+        ]
+      },
+      {
+        "name": "500 ms kept",
+        "any": [
+          "500 ms",
+          "500ms"
+        ]
+      },
+      {
+        "name": "400 and 503 kept",
+        "all": [
+          "400",
+          "503"
+        ]
+      },
+      {
+        "name": "limit of 3 retries kept",
+        "any": [
+          "3 retries",
+          "three retries",
+          "more than 3",
+          "more than three",
+          "maximum of 3",
+          "maximum of three",
+          "at most 3",
+          "at most three",
+          "up to 3",
+          "up to three",
+          "is 3",
+          "is three",
+          "3 times",
+          "three times"
+        ]
+      },
+      {
+        "name": "link kept",
+        "any": [
+          "https://example.com/docs/backoff"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "jira",
+    "task": "Clean up this Jira update before I post it. Reply with only the revised text.",
+    "draft": "Yesterday we deployed the new parser to staging. At this point in time error rates are falling, and it is very likely that the remaining errors are due to the old cache, though we haven't confirmed that yet. Tomorrow we will be reviewing the logs with the data team. @Morgan, would you be able to possibly take a look at the dashboard when you get a chance?",
+    "checks": [
+      {
+        "name": "past event stays past",
+        "any": [
+          "deployed"
+        ]
+      },
+      {
+        "name": "current state stays present",
+        "any": [
+          "are falling",
+          "are dropping",
+          "are declining",
+          "are decreasing",
+          "are going down",
+          "is falling",
+          "are trending down"
+        ]
+      },
+      {
+        "name": "future plan stays future",
+        "any": [
+          "will",
+          "Tomorrow",
+          "tomorrow",
+          "plan to",
+          "'ll"
+        ]
+      },
+      {
+        "name": "degree kept (very/most likely)",
+        "any": [
+          "very likely",
+          "most likely",
+          "probably",
+          "almost certainly"
+        ]
+      },
+      {
+        "name": "still unconfirmed",
+        "any": [
+          "haven't confirmed",
+          "not confirmed",
+          "unconfirmed",
+          "haven't verified",
+          "not yet confirmed",
+          "not verified",
+          "yet to confirm",
+          "need to confirm"
+        ]
+      },
+      {
+        "name": "@Morgan kept",
+        "any": [
+          "@Morgan"
+        ]
+      },
+      {
+        "name": "ask stays polite",
+        "any": [
+          "could you",
+          "Could you",
+          "would you",
+          "Would you",
+          "please",
+          "Please",
+          "when you get a chance",
+          "when you have a chance",
+          "when you can"
+        ]
+      }
+    ]
+  }
+]
