@@ -31,8 +31,9 @@ With the [skills CLI](https://github.com/vercel-labs/skills), for any harness th
 
 ```
 pnpm dlx skills add chrisvaillancourt/the-elements-of-style -g -s writing-clearly-and-concisely -a claude-code codex
-pnpm dlx skills update writing-clearly-and-concisely -g   # later, to pick up changes
 ```
+
+To pick up changes later, run the same `add` command again. Don't use `skills update`. In skills 1.5.26 it reinstalls with `-y` and no `-a`, which installs the skill for every agent the CLI detects on the machine, not just Claude Code and Codex.
 
 Plugin installs per harness:
 

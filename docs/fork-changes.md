@@ -81,7 +81,7 @@ Each one overrides advice the reference gives, and each was checked against the 
 ## Implementation notes
 
 - **Split script:** [`scripts/split-reference.py`](../scripts/split-reference.py). Run against upstream's `elements-of-style.md` at `05fc4f0`, it rebuilds the three reference files byte for byte. It also re-reads its output and checks that the bodies rebuild the original Sections II–V exactly. If the source text ever changes, rerun it rather than hand-editing the references.
-- **Install.** The skill is installed with the vercel-labs `skills` CLI from this fork's `main`. It goes into `~/.agents/skills/`, which Codex and omp read directly; `~/.claude/skills/` symlinks to it for Claude Code. `skills update` follows this fork, so upstream changes arrive only when merged here.
+- **Install.** The skill is installed with the vercel-labs `skills` CLI from this fork's `main`. It goes into `~/.agents/skills/`, which Codex and omp read directly; `~/.claude/skills/` symlinks to it for Claude Code. Re-running the `add` command picks up this fork's `main`, so upstream changes arrive only when merged here. Don't use `skills update` (1.5.26): it reinstalls for every agent the CLI detects, not just the two named in `-a`.
 - **Token counts** come from `tiktoken` (o200k_base, cl100k_base). Claude's tokenizer wasn't measured.
 
 ## Verification
